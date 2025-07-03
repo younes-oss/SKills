@@ -35,4 +35,14 @@ public class CompetenceService {
         Competence saved = competenceRepository.save(competence);
         return competenceMapper.toDto(saved);
     }
-} 
+    //Cette partie du code prend chaque sous-compétence reçue dans la requête,
+    // la convertit en entité, la relie à la compétence principale,
+    // puis construit la liste complète des sous-compétences à associer à la compétence
+    // avant de sauvegarder le tout.
+
+    public CompetenceDto getCompetenceById(Long id) {
+        Competence competence = competenceRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Compétence non trouvée"));
+        return competenceMapper.toDto(competence);
+    }
+}
