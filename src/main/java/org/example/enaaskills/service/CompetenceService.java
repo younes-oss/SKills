@@ -5,6 +5,7 @@ import org.example.enaaskills.mapper.CompetenceMapper;
 import org.example.enaaskills.model.Competence;
 import org.example.enaaskills.model.SousCompetence;
 import org.example.enaaskills.repository.CompetenceRepository;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,4 +46,29 @@ public class CompetenceService {
             .orElseThrow(() -> new RuntimeException("Compétence non trouvée"));
         return competenceMapper.toDto(competence);
     }
+
+    public CompetenceDto updateCompetence(Long id, CompetenceDto dto) {
+        Competence existing = competenceRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Compétence non trouvée"));
+
+        // Mettre à jour les champs de la compétence
+        existing.setNom(dto.getNom());
+        existing.setDescription(dto.getDescription());
+
+        // Mettre à jour les sous-compétences (remplacement simple)
+        List<SousCompetence> updatedSousCompetences = new java.util.ArrayList<>();
+        if (dto.getSousCompetences() != null) {
+            for (CompetenceDto.SousCompetenceDto scDto : dto.getSousCompetences()) {
+                SousCompetence sc = competenceMapper.toEntity(scDto);
+                sc.setCompetence(existing);
+                updatedSousCompetences.add(sc);
+            }
+        }
+        existing.setSousCompetences(updatedSousCompetences);
+
+        Competence saved = competenceRepository.save(existing);
+        return competenceMapper.toDto(saved);
+    }
+
+
 }
