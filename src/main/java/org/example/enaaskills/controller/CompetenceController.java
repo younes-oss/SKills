@@ -24,4 +24,9 @@ public class CompetenceController {
     public CompetenceDto creerCompetence(@RequestBody CompetenceDto dto) {
         return competenceService.creerCompetence(dto);
     }
+
+    @PutMapping("/{id}")
+    public CompetenceDto updateCompetence(@PathVariable Long id, @RequestBody CompetenceDto dto) {
+        return competenceService.updateCompetence(id, dto);
+    }
 } 
